@@ -1,83 +1,160 @@
-#include <stdio.h> 
-#define MAX 10 
+#include <iostream.h>
+#include <conio.h>
+#include <stdio.h>
+#include <alloc.h>
 
-typedef struct { 
-	int Item[MAX]; 
-	int Front; 
-	int Rear; 
-	int Count; 
-}	Queue;
+int pil;
+void pilih();
+void buat_baru();
+void tambah_belakang();
+void tambah_depan();
+void hapus_belakang();
+void hapus_depan();
+void tampil();
 
 
- 
-// Inisialisasi antrian 
-void Inisialisasi(Queue *q){ 
-	q->Front = q->Rear = -1; 
-	q->Count = 0; 
+struct simpul
+{
+    char judul [50], nama [50], penerbit [50];
+
+    struct simpul *kiri, *kanan;
+} mhs, *baru, *awal=NULL, *akhir=NULL,*hapus,*bantu;
+
+int main(){
+    do{
+        clrscr();
+        cout<<"====================="<<endl;
+        cout<<" Perintah Linkedlist"<<endl;
+        cout<<"====================="<<endl;
+        cout<<"1. Tambah Depan"<<endl;
+        cout<<"2. Tambah Belakang"<<endl;
+        cout<<"3. Hapus Depan"<<endl;
+        cout<<"4. Hapus Belakang"<<endl;
+        cout<<"5. Tampilkan"<<endl;
+        cout<<"6. Selesai"<<endl;
+        cout<<"Pilihan Anda : ";
+        cin>>pil;
+        pilih();
+    } while(pil!=6);
+
+    return 0;
 }
 
-
- 
-// Prosedur untuk menyisipkan data pada antrian 
-void Tambah(Queue *q, int item){ 
-	if ((q->Rear == MAX-1 && q->Front == 0) || (q->Rear + 1 == q->Front)){
- 		printf ("\nAntrian Penuh"); 
- 		return ; 
-	} 
-	if (q->Rear == MAX - 1) 
-		q->Rear = 0; 
- 	else 
-		q->Rear++; 
- 		q->Item[q->Rear] = item; 
-		q->Count++; 
-	if (q->Front == -1) q->Front = 0; 
+void pilih(){
+    if(pil==1)
+        tambah_depan();
+    else if(pil==2)
+        tambah_belakang();
+    else if(pil==3)
+        hapus_depan();
+    else if(pil==4)
+        hapus_belakang();
+    else if(pil==5)
+        tampil();
+    else
+        cout<<"selesai";
 }
 
-
-
-// Prosedur untuk menghapus data dari antrian 
-int Hapus(Queue *q){ 
-	int data; 
-	if (q->Front == -1){ 
-		printf ("\nAntrian Kosong");
-		return NULL; 
-	} 
-	else{ 
-		data = q->Item[q->Front];
-		q->Count--; 
-	if (q->Front == q->Rear) 
-		q->Front = q->Rear = -1; 
-	else{ 
-		if (q->Front == MAX-1) 
-			q->Front = 0; 
-		else 
-			q->Front++;
-		} 
-	}
-	return data; 
-} 
-
-void Tampil(Queue *q){ 
-	for(int i=0; i<q->Count; i++) 
-	printf("\nData : %d", q->Item[i]); 
+void buat_baru(){
+    baru=(simpul*)malloc(sizeof(struct simpul));
+    cout<<"Masukkan Judul Buku    : ";
+    cin>>baru->judul;
+    cout<<"Masukkan Nama          : ";
+    cin>>baru->nama;
+    cout<<"Masukkan Penerbit Buku : ";
+    cin>>baru->penerbit;
+    baru->kiri=NULL;
+    baru->kanan=NULL;
 }
 
-int main(){ 
-	Queue q; 
-	int data; 
-	Inisialisasi(&q); 
-	Tambah(&q,5); 
-	Tambah(&q,6); 
-	Tambah(&q,7); 
-	Tambah(&q,8); 
-	Tambah(&q,9); 
-	Tambah(&q,10);  
-	Tampil(&q); 
-	data = Hapus(&q); 
-		printf("\nHapus Item = %d ", data); 
-		data = Hapus(&q); 
-		printf("\nHapus Item = %d ", data); 
-		data = Hapus(&q); 
-		printf("\nHapus Item = %d ", data); 
-	Tampil(&q); 
+void tambah_belakang(){
+    buat_baru();
+    if(awal==NULL){
+        awal=baru;
+        akhir=baru;
+    }
+    else{
+        akhir->kanan=baru;
+        baru->kiri=akhir;
+        akhir=baru;
+    }
+    cout<<endl;
+    cout<<endl;
+    tampil();
+}
+
+void tambah_depan(){
+    buat_baru();
+    if(awal==NULL){
+        awal=baru;
+        akhir=baru;
+    }
+    else{
+        baru->kanan=awal;
+        awal->kiri=baru;
+        awal=baru;
+    }
+    cout<<endl;
+    cout<<endl;
+    tampil();
+}
+
+void hapus_depan(){
+    if (awal==NULL)
+        cout<<"Tidak ada(NULL)";
+    else if (awal->kanan==NULL){
+        hapus=awal;
+        awal=NULL;
+        akhir=NULL;
+        free(hapus);
+    }
+    else{
+        hapus=awal;
+        awal=hapus->kanan;
+        awal->kiri=NULL;
+        free(hapus);
+    }
+    cout<<endl;
+    cout<<endl;
+    tampil();
+}
+
+void hapus_belakang(){
+    if (awal==NULL)
+        cout<<"Tidak ada(NULL)";
+    else if (awal->kanan==NULL){
+        hapus=awal;
+        awal=NULL;
+        akhir=NULL;
+        free(hapus);
+    }
+    else{
+        hapus=akhir;
+        akhir=hapus->kiri;
+        akhir->kanan=NULL;
+        free(hapus);
+    }
+    cout<<endl;
+    cout<<endl;
+    tampil();
+}
+
+void tampil(){
+    if (awal==NULL)
+        cout<<"Tidak ada(NULL)";
+    else{
+        bantu=awal;
+        while(bantu!=NULL){
+            cout<<"==============================";
+            cout<<" Perpustakaan Kota Mojokerto";
+            COUT<<"==============================";
+            cout<<"Judul Buku    : "<<bantu->judul;
+            cout<<"Nama          : "<<bantu->nama;
+            cout<<"Penerbit Buku : "<<bantu->penerbit;
+            cout<<endl;
+            cout<<endl;
+            bantu=bantu->kanan;
+        }
+    }
+    getch();
 }
